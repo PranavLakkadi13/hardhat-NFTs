@@ -23,7 +23,7 @@ const networkConfig = {
     vrfCoordinatorV2Address: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
     gasLane:
       "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
-    subscriptionId: "/* Enter the sub id */",
+    subscriptionId: "/* */", // add your ID here!
     mintFee: "10000000000000000",
     callbackGasLimit: "500000",
     interval: "30",
