@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "base64-sol/base64.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
+error DynamicSvgNft__InvalidTokenURI();
+
 contract DynamicSvgNft is ERC721 {
     /**
      * Basic Overview:
@@ -32,7 +34,7 @@ contract DynamicSvgNft is ERC721 {
     // Since SVG is basicaly in code form it cant be of much use directly 
     // Therefore we can convert it into Base64 form (the image data) and then use it 
     function SVGtoImageURI(string memory svg) public pure returns (string memory) {
-        string memory svgBase64Encoded = Base64.encode(bytes(string(abi.encodePacked(svg))));
+        string memory svgBase64Encoded = Base64.encode((abi.encodePacked(svg)));
         return string(abi.encodePacked(base64EncodedSvgPrefix,svgBase64Encoded));
     }
 
@@ -50,16 +52,36 @@ contract DynamicSvgNft is ERC721 {
         return "data:application/json;base64,";
     }
 
-    // Here if the value they paid is less then the current price then they get a highvaluetoken
-    function tokenURI(uint256 tokenId) public view override returns(string memory) {
-        require(_exists(tokenId),"Token non-existent");
-        (, int price,,,) = i_pricefeedAddress.latestRoundData();
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+        if (!_exists(tokenId)){
+            revert DynamicSvgNft__InvalidTokenURI();
+        }
+        (, int256 price, , , ) = i_pricefeedAddress.latestRoundData();
         string memory imageURI = i_lowImageURI;
         if (price >= s_tokenIdtoHighValue[tokenId]) {
             imageURI = i_highImageURI;
         }
-        return string(abi.encodePacked(_baseURI(),Base64.encode(bytes(abi.encodePacked('{"name": "',name(),'", "description":"An Nft that changes based on the chainlink feed",',
-        '"attributes":[{"trait_types": "coolness","Value":100}], "image":"',imageURI,'"}')))));
+        return
+            string(
+                abi.encodePacked(
+                    _baseURI(),
+                    Base64.encode(
+                            abi.encodePacked(
+                                '{"name":"',
+                                name(),
+                                '", "description":"An NFT that changes based on the Chainlink Feed", ',
+                                '"attributes": [{"trait_type": "coolness", "value": 100}], "image":"',
+                                imageURI,
+                                '"}'
+                        )
+                    )
+                )
+            );
+    }
+
+    function getPrice() public view returns (int256) {
+        (, int256 price, , , ) = i_pricefeedAddress.latestRoundData();
+        return price;
     }
 
     function getTokenCounter() public view returns(uint256) {
@@ -74,7 +96,7 @@ contract DynamicSvgNft is ERC721 {
         return i_highImageURI;
     }
 
-    function getPriceFeedAddress() public view returns(AggregatorV3Interface) {
+    function getPriceFeed() public view returns(AggregatorV3Interface) {
         return i_pricefeedAddress;
     }
 }
