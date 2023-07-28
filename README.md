@@ -21,3 +21,5 @@ yarn hardhat coverage
 yarn hardhat deploy 
 ```
 
+
+Note: In 02-deploy-RandomIpfsNft.js, in your .env file add UPLOAD_TO_PINATA == "true", before deploying the code on hardhat 
