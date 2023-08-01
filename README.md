@@ -18,8 +18,10 @@ Try running some of the following tasks:
 yarn hardhat help
 yarn hardhat test
 yarn hardhat coverage
-yarn hardhat deploy 
+yarn hardhat deploy
+yarn hardhat deploy --network sepolia 
 ```
 
+Try to deploy on a testnet to see the NFTs minted on the testnet and can be viewed on the opensea testnet using the transaction address 
 
 Note: In 02-deploy-RandomIpfsNft.js, in your .env file add UPLOAD_TO_PINATA == "true", before deploying the code on hardhat 
