@@ -1,6 +1,6 @@
-3 contracts:-
+This project has 3 contracts deployed :-
 
-1. Basic NFT 
+1. Basic NFT -> It is just a implementation of the openzepplin ERC-721 code
 
 2. Random IPFS NFT -> Random at creation time making them rare and be hosted on IPFS 
 --> Pros: It is cheap
